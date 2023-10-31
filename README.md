@@ -12,7 +12,7 @@ Tugas : Buatlah Method Program java Toast Number, dengan menghasilkan Bilangan F
 
 ## Code pada menu program java class `(MainActivity.java)` :
 ```
-ppackage com.fibonaccisequence;
+package com.fibonaccisequence;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
