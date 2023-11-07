@@ -12,68 +12,129 @@ Tugas : Buatlah Method Program java Toast Number, dengan menghasilkan Bilangan F
 
 ## Code pada menu program java class `(MainActivity.java)` :
 ```
-package com.fibonaccisequence;
+package com.example.fibonacci;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
 
 public class MainActivity extends AppCompatActivity {
+    private TextView show_count;
     private int count = 1;
-    private TextView showCount;
+    private long fibNMinus1 = 1;
+    private long fibNMinus2 = 0;
+    private int limit = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        showCount = findViewById(R.id.show_count);
-    }
-
-    public void showToast(View view) {
-        Toast toast = Toast.makeText(this, "Hello Toast!", Toast.LENGTH_SHORT);
-        toast.show();
+        show_count = findViewById(R.id.show_count);
     }
 
     public void countUp(View view) {
-        if (count < 0) {
-            count = 0;
+        if (count == 0) {
+            show_count.setText("1");
+        }
+        else if (count == 1) {
+            show_count.setText("1");
+        }
+        else {
+            if (limit != -1 && count > limit) {
+                count = 1;
+                fibNMinus1 = 0;
+                fibNMinus2 = 1;
+                show_count.setText(getString(R.string.count_initial_value));
+            }
+            else {
+                long fibCurrent = fibNMinus1 + fibNMinus2;
+                fibNMinus2 = fibNMinus1;
+                fibNMinus1 = fibCurrent;
+
+                int colorResId = R.color.orange;
+                switch (count % 11) {
+                    case 1:
+                        colorResId = R.color.orange;
+                        break;
+                    case 2:
+                        colorResId = R.color.hijaumuda;
+                        break;
+                    case 3:
+                        colorResId = R.color.purple;
+                        break;
+                    case 4:
+                        colorResId = R.color.salem;
+                        break;
+                    case 5:
+                        colorResId = R.color.birumuda;
+                        break;
+                    case 6 :
+                        colorResId = R.color.kuning;
+                        break;
+                    case 7:
+                        colorResId = R.color.hijau;
+                        break;
+                    case 8:
+                        colorResId = R.color.cream;
+                        break;
+                    case 9:
+                        colorResId = R.color.pink;
+                        break;
+                    case 10:
+                        colorResId = R.color.biru;
+                        break;
+                    case 11:
+                        colorResId = R.color.colorAccent;
+                        break;
+                }
+                show_count.setTextColor(getResources().getColor(colorResId));
+                show_count.setText(String.valueOf(fibCurrent));
+                show_count.setBackgroundColor(Color.DKGRAY);
+            }
         }
 
-        int result = generateFibonacci(count);
-
-        if (result <= 1000) {
-            showCount.setText(Integer.toString(result));
-            count++;
-        }
-    }
-
-    private int generateFibonacci(int n) {
-        if (n <= 0) {
-            return 0;
-        } else if (n == 1) {
-            return 1;
-        }
-
-        int first = 0;
-        int second = 1;
-
-        for (int i = 2; i <= n; i++) {
-            int next = first + second;
-            first = second;
-            second = next;
-        }
-
-        return second;
+        count++;
     }
 
     public void Reset(View view) {
         count = 1;
-        showCount.setText("1");
+        fibNMinus1 = 1;
+        fibNMinus2 = 0;
+        show_count.setText(getString(R.string.count_initial_value));
     }
 
+    public void setLimit(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set Limit");
+
+        final EditText input = new EditText(this);
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String limitStr = input.getText().toString();
+                limit = Integer.parseInt(limitStr);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 }
 ```
 
@@ -87,14 +148,13 @@ public class MainActivity extends AppCompatActivity {
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <Button
-        android:id="@+id/button_toast"
+        android:id="@+id/setLimit"
         android:layout_width="421dp"
         android:layout_height="48dp"
         android:background="@color/colorPrimary"
-        android:onClick="showToast"
-        android:text="Toast"
+        android:onClick="setLimit"
+        android:text="Set limit"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_height="636dp"
         android:background="#FFFF00"
         android:gravity="center_vertical"
-        android:text="1"
+        android:text="@string/count_initial_value"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
         android:textSize="160dp"
@@ -128,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_toast"
+        app:layout_constraintTop_toBottomOf="@+id/setLimit"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore=",Rtlcompat" />
 
@@ -153,11 +213,12 @@ public class MainActivity extends AppCompatActivity {
 ## Code pada menu values (strings.xml) :
 ```
 <resources>
-    <string name="app_name">FibonacciSequence</string>
+    <string name="app_name">Fibonacci</string>
     <string name="button_label_toast">Toast</string>
     <string name="button_label_count">Count</string>
     <string name="count_initial_value">0</string>
     <string name="coast_message">Hello Toast</string>
+    <string name="set_Limit">Set limit</string>
     <string name="Reset">Reset</string>
 </resources>
 ```
@@ -173,6 +234,15 @@ public class MainActivity extends AppCompatActivity {
     <color name="colorPrimary">#3F5185</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="birumuda">#ABCBFA</color>
+    <color name="salem">#F8C6E6</color>
+    <color name ="purple">#E3A2ED</color>
+    <color name="hijau">#92A676</color>
+    <color name="biru">#8FC2EA</color>
+    <color name="hijaumuda">#C2E69C</color>
+    <color name="kuning">#FFEB3B</color>
+    <color name="orange">#FF9800</color>
+    <color name="cream">#E6C18A</color>
 </resources>
 ```
 
@@ -184,7 +254,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-https://github.com/AzwaDipani/DeretBilanganFibonacci/assets/115677539/1c19689c-9938-405e-bd51-e0a7a79fa5f9
+
+https://github.com/AzwaDipani/DeretBilanganFibonacci/assets/115677539/c3454676-4054-4815-b9e9-f5c679470223
+
+
+
 
 
 
